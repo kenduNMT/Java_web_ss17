@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 450px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+        .login-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        }
+        .login-header h2 {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            font-weight: 700;
+        }
+        .login-header p {
+            position: relative;
+            z-index: 1;
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        .login-body {
+            padding: 40px 30px;
+        }
+        .form-floating {
+            margin-bottom: 20px;
+        }
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+            background: white;
+        }
+        .btn-login {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn-login:hover::before {
+            left: 100%;
+        }
+        .error-message {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: none;
+        }
+        .success-message {
+            background: linear-gradient(45deg, #00b894, #00a085);
+            color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: none;
+        }
+        .field-error {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 5px;
+        }
+        .is-invalid {
+            border-color: #dc3545;
+        }
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+        .links-section {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        .links-section a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .links-section a:hover {
+            color: #764ba2;
+        }
+        .social-login {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            color: white;
+        }
+        .social-btn.google {
+            background: #db4437;
+        }
+        .social-btn.facebook {
+            background: #3b5998;
+        }
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h2><i class="fas fa-sign-in-alt me-2"></i>Đăng Nhập</h2>
+            <p>Chào mừng trở lại!</p>
+        </div>
+
+        <div class="login-body">
+            <!-- Success Message -->
+            <div th:if="${logoutMessage}" class="success-message">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${logoutMessage}"></span>
+            </div>
+
+            <!-- Error Message -->
+            <div th:if="${loginError}" class="error-message">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:text="${loginError}"></span>
+            </div>
+
+            <form th:action="@{/auth/login}" th:object="${loginDTO}" method="post">
+                <!-- Username -->
+                <div class="form-floating">
+                    <input type="text"
+                           class="form-control"
+                           th:class="${#fields.hasErrors('username')} ? 'form-control is-invalid' : 'form-control'"
+                           id="username"
+                           th:field="*{username}"
+                           placeholder="Tên đăng nhập">
+                    <label for="username"><i class="fas fa-user me-2"></i>Tên đăng nhập</label>
+                    <div th:if="${#fields.hasErrors('username')}" class="field-error">
+                        <span th:errors="*{username}"></span>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="form-floating">
+                    <input type="password"
+                           class="form-control"
+                           th:class="${#fields.hasErrors('password')} ? 'form-control is-invalid' : 'form-control'"
+                           id="password"
+                           th:field="*{password}"
+                           placeholder="Mật khẩu">
+                    <label for="password"><i class="fas fa-lock me-2"></i>Mật khẩu</label>
+                    <div th:if="${#fields.hasErrors('password')}" class="field-error">
+                        <span th:errors="*{password}"></span>
+                    </div>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="remember-me">
+                    <input class="form-check-input me-2"
+                           type="checkbox"
+                           id="rememberMe"
+                           th:field="*{rememberMe}">
+                    <label class="form-check-label" for="rememberMe">
+                        Ghi nhớ đăng nhập
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-login w-100">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    <span>Đăng Nhập</span>
+                </button>
+            </form>
+
+            <!-- Social Login -->
+            <div class="social-login">
+                <p class="text-muted mb-3">Hoặc đăng nhập với</p>
+                <button class="social-btn google" type="button">
+                    <i class="fab fa-google"></i>
+                </button>
+                <button class="social-btn facebook" type="button">
+                    <i class="fab fa-facebook-f"></i>
+                </button>
+            </div>
+
+            <!-- Links -->
+            <div class="links-section">
+                <p class="text-muted mb-2">
+                    <a href="#" class="me-3">
+                        <i class="fas fa-key me-1"></i>Quên mật khẩu?
+                    </a>
+                </p>
+                <p class="text-muted">
+                    Chưa có tài khoản?
+                    <a href="/auth/register">
+                        <i class="fas fa-user-plus me-1"></i>Đăng ký ngay
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Add some interactive effects
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginCard = document.querySelector('.login-card');
+
+        // Add floating animation
+        loginCard.style.animation = 'fadeInUp 0.6s ease-out';
+
+        // Add focus effects
+        const inputs = document.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+    });
+
+    // Add keyframes for animation
+    const style = document.createElement('style');
+    style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+    document.head.appendChild(style);
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng Ký Thành Công</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .success-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .success-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      padding: 60px 40px;
+      max-width: 500px;
+      width: 100%;
+    }
+    .success-icon {
+      color: #4CAF50;
+      font-size: 80px;
+      margin-bottom: 30px;
+      animation: bounce 1s ease-in-out;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    .success-title {
+      color: #2e7d32;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    .success-message {
+      color: #666;
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    .btn-home {
+      background: linear-gradient(45deg, #4CAF50, #45a049);
+      border: none;
+      border-radius: 10px;
+      padding: 12px 30px;
+      font-weight: 600;
+      color: white;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+    .btn-home:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+      color: white;
+    }
+    .celebration {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #FFD700;
+      animation: confetti 3s ease-in-out infinite;
+    }
+    @keyframes confetti {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+<!-- Confetti Animation -->
+<div class="celebration" style="left: 10%; animation-delay: 0s;"></div>
+<div class="celebration" style="left: 20%; animation-delay: 0.5s;"></div>
+<div class="celebration" style="left: 30%; animation-delay: 1s;"></div>
+<div class="celebration" style="left: 40%; animation-delay: 1.5s;"></div>
+<div class="celebration" style="left: 50%; animation-delay: 2s;"></div>
+<div class="celebration" style="left: 60%; animation-delay: 0.8s;"></div>
+<div class="celebration" style="left: 70%; animation-delay: 1.3s;"></div>
+<div class="celebration" style="left: 80%; animation-delay: 1.8s;"></div>
+<div class="celebration" style="left: 90%; animation-delay: 0.3s;"></div>
+
+<div class="success-container">
+  <div class="success-card">
+    <div class="success-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+
+    <h1 class="success-title">Thành Công!</h1>
+
+    <div th:if="${successMessage}" class="success-message">
+      <i class="fas fa-party-horn me-2"></i>
+      <span th:text="${successMessage}"></span>
+    </div>
+
+    <div th:unless="${successMessage}" class="success-message">
+      <i class="fas fa-user-check me-2"></i>
+      Tài khoản của bạn đã được tạo thành công!<br>
+      Chào mừng bạn đến với hệ thống của chúng tôi.
+    </div>
+
+    <p class="text-muted mb-4">
+      <i class="fas fa-info-circle me-2"></i>
+      Bạn có thể bắt đầu sử dụng các dịch vụ ngay bây giờ.
+    </p>
+
+    <a href="#" class="btn-home">
+      <i class="fas fa-home me-2"></i>Về Trang Chủ
+    </a>
+
+    <div class="mt-4">
+      <a href="/auth/register" class="text-decoration-none text-muted">
+        <i class="fas fa-user-plus me-2"></i>Đăng ký tài khoản khác
+      </a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

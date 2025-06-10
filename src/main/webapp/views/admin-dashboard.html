@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            --light-bg: #f8fafc;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            background: var(--light-bg);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin: 0;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 0.75rem;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.users { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+        .stat-icon.orders { background: linear-gradient(135deg, #10b981, #059669); }
+        .stat-icon.revenue { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .stat-icon.products { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--dark-color);
+            margin: 0;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 0.5rem 0;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .stat-change.positive {
+            color: var(--success-color);
+        }
+
+        .stat-change.negative {
+            color: var(--danger-color);
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .chart-title i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        /* Recent Activity */
+        .activity-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1rem;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin: 0 0 0.25rem;
+        }
+
+        .activity-desc {
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .activity-time {
+            color: #9ca3af;
+            font-size: 0.8rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-action i {
+            margin-right: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3730a3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .charts-section,
+            .activity-section {
+                grid-template-columns: 1fr;
+            }
+
+            .top-bar {
+                padding: 1rem;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <a href="#" class="sidebar-brand">
+            <i class="fas fa-crown me-2"></i>Admin Panel
+        </a>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-item">
+            <a href="/admin/dashboard" class="nav-link active">
+                <i class="fas fa-chart-bar"></i>
+                Dashboard
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="/admin/users" class="nav-link">
+                <i class="fas fa-users"></i>
+                Quản lý người dùng
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="/admin/orders" class="nav-link">
+                <i class="fas fa-shopping-cart"></i>
+                Đơn hàng
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="/admin/products" class="nav-link">
+                <i class="fas fa-box"></i>
+                Sản phẩm
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="/admin/analytics" class="nav-link">
+                <i class="fas fa-chart-line"></i>
+                Thống kê
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="/admin/settings" class="nav-link">
+                <i class="fas fa-cog"></i>
+                Cài đặt
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="/admin/reports" class="nav-link">
+                <i class="fas fa-file-alt"></i>
+                Báo cáo
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="/home" class="nav-link">
+                <i class="fas fa-home"></i>
+                Trang chủ
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="/auth/logout" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i>
+                Đăng xuất
+            </a>
+        </div>
+    </nav>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <h1 class="page-title">Dashboard</h1>
+        <div class="admin-info">
+            <div class="admin-avatar" th:text="${admin.username != null ? admin.username.substring(0,1).toUpperCase() : 'A'}">A</div>
+            <div>
+                <div class="fw-bold" th:text="${admin.username}">Admin</div>
+                <small class="text-muted">Quản trị viên</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn-action btn-primary" onclick="window.location.href='/admin/users/add'">
+                <i class="fas fa-user-plus"></i>
+                Thêm người dùng
+            </button>
+            <button class="btn-action btn-success" onclick="window.location.href='/admin/products/add'">
+                <i class="fas fa-plus"></i>
+                Thêm sản phẩm
+            </button>
+            <button class="btn-action btn-warning" onclick="generateReport()">
+                <i class="fas fa-download"></i>
+                Xuất báo cáo
+            </button>
+            <button class="btn-action btn-danger" onclick="showSystemStatus()">
+                <i class="fas fa-server"></i>
+                Trạng thái hệ thống
+            </button>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="totalUsers">1,234</div>
+                        <div class="stat-label">Tổng người dùng</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up me-1"></i>
+                            +12% so với tháng trước
+                        </div>
+                    </div>
+                    <div class="stat-icon users">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="totalOrders">5,678</div>
+                        <div class="stat-label">Tổng đơn hàng</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up me-1"></i>
+                            +8% so với tháng trước
+                        </div>
+                    </div>
+                    <div class="stat-icon orders">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="totalRevenue">₫2.5M</div>
+                        <div class="stat-label">Doanh thu tháng</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up me-1"></i>
+                            +15% so với tháng trước
+                        </div>
+                    </div>
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="totalProducts">890</div>
+                        <div class="stat-label">Sản phẩm</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-down me-1"></i>
+                            -2% so với tháng trước
+                        </div>
+                    </div>
+                    <div class="stat-icon products">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <div class="chart-title">
+                    <i class="fas fa-chart-line"></i>
+                    Doanh thu 6 tháng gần đây
+                </div>
+                <canvas id="revenueChart" height="300"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-title">
+                    <i class="fas fa-chart-pie"></i>
+                    Phân bố đơn hàng
+                </div>
+                <canvas id="ordersChart" height="300"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+            <div class="activity-card">
+                <div class="chart-title">
+                    <i class="fas fa-clock"></i>
+                    Hoạt động gần đây
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #dbeafe; color: #3b82f6;">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Người dùng mới đăng ký</div>
+                        <div class="activity-desc">john.doe@email.com đã tạo tài khoản</div>
+                    </div>
+                    <div class="activity-time">5 phút trước</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #dcfce7; color: #16a34a;">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Đơn hàng mới</div>
+                        <div class="activity-desc">Đơn #12345 - ₫1,250,000</div>
+                    </div>
+                    <div class="activity-time">12 phút trước</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #fef3c7; color: #d97706;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Cảnh báo tồn kho</div>
+                        <div class="activity-desc">Sản phẩm ABC sắp hết hàng</div>
+                    </div>
+                    <div class="activity-time">1 giờ trước</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #fce7f3; color: #be185d;">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Đánh giá mới</div>
+                        <div class="activity-desc">Sản phẩm XYZ nhận 5 sao</div>
+                    </div>
+                    <div class="activity-time">2 giờ trước</div>
+                </div>
+            </div>
+
+            <div class="activity-card">
+                <div class="chart-title">
+                    <i class="fas fa-tasks"></i>
+                    Công việc cần làm
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #fef2f2; color: #dc2626;">
+                        <i class="fas fa-exclamation"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Xử lý khiếu nại</div>
+                        <div class="activity-desc">3 khiếu nại cần xem xét</div>
+                    </div>
+                    <div class="activity-time">Khẩn cấp</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #fef3c7; color: #d97706;">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Duyệt sản phẩm</div>
+                        <div class="activity-desc">15 sản phẩm chờ duyệt</div>
+                    </div>
+                    <div class="activity-time">Hôm nay</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #e0f2fe; color: #0288d1;">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Báo cáo tuần</div>
+                        <div class="activity-desc">Chuẩn bị báo cáo tuần này</div>
+                    </div>
+                    <div class="activity-time">Thứ 6</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #f3e8ff; color: #7c3aed;">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Cập nhật hệ thống</div>
+                        <div class="activity-desc">Lên lịch bảo trì server</div>
+                    </div>
+                    <div class="activity-time">Tuần sau</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
+
+<script>
+    // Animate numbers on load
+    function animateNumbers() {
+        const counters = document.querySelectorAll('.stat-value');
+
+        counters.forEach(counter => {
+            const target = parseInt(counter.innerText.replace(/[^\d]/g, ''));
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+
+                if (counter.id === 'totalRevenue') {
+                    counter.innerText = '₫' + (current / 1000).toFixed(1) + 'M';
+                } else {
+                    counter.innerText = Math.floor(current).toLocaleString();
+                }
+            }, 20);
+        });
+    }
+
+    // Revenue Chart
+    function createRevenueChart() {
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
+                datasets: [{
+                    label: 'Doanh thu (triệu VNĐ)',
+                    data: [1.2, 1.8, 2.1, 1.9, 2.3, 2.5],
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#f3f4f6'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Orders Chart
+    function createOrdersChart() {
+        const ctx = document.getElementById('ordersChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Hoàn thành', 'Đang xử lý', 'Đã hủy'],
+                datasets: [{
+                    data: [68, 25, 7],
+                    backgroundColor: [
+                        '#10b981',
+                        '#f59e0b',
+                        '#ef4444'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    // Action functions
+    function generateReport() {
+        alert('Tính năng xuất báo cáo đang được phát triển!');
+    }
+
+    function showSystemStatus() {
+        alert('Hệ thống đang hoạt động bình thường (99.9% uptime)');
+    }
+
+    // Initialize everything when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        animateNumbers();
+        createRevenueChart();
+        createOrdersChart();
+    });
+
+    // Sidebar navigation
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (!this.href || this.href.includes('#')) {
+                e.preventDefault();
+            }
+
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>

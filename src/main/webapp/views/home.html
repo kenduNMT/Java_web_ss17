@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chủ</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        .main-container {
+            padding: 100px 0 50px 0;
+        }
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+        .welcome-title {
+            color: #2d3436;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .user-info {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .search-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            padding: 0;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: 100%;
+        }
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+        }
+        .product-image-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            border-radius: 15px 15px 0 0;
+        }
+        .product-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+        .product-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 10px;
+            height: 60px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .product-description {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            height: 60px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00b894;
+            margin-bottom: 10px;
+        }
+        .product-stock {
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        .stock-available {
+            color: #00b894;
+        }
+        .stock-out {
+            color: #e17055;
+        }
+        .btn-buy {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-buy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(116, 185, 255, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+        .btn-buy:disabled {
+            background: #ddd;
+            color: #999;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .pagination-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .pagination .page-link {
+            border: none;
+            background: transparent;
+            color: #74b9ff;
+            font-weight: 600;
+            padding: 10px 15px;
+            margin: 0 2px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .pagination .page-link:hover {
+            background: #74b9ff;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(116, 185, 255, 0.3);
+        }
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            box-shadow: 0 5px 15px rgba(116, 185, 255, 0.3);
+        }
+        .no-products {
+            text-align: center;
+            padding: 60px 20px;
+            color: #636e72;
+        }
+        .no-products i {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+        .footer {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/home">
+            <i class="fas fa-home me-2"></i>MyApp
+        </a>
+
+        <div class="navbar-nav ms-auto">
+            <span class="navbar-text me-3">
+                <i class="fas fa-user me-2"></i>
+                Xin chào, <strong th:text="${user.username}">User</strong>
+            </span>
+            <a class="btn btn-outline-danger btn-sm" href="/auth/logout">
+                <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main-container">
+    <div class="container">
+        <!-- Welcome Message -->
+        <div th:if="${welcomeMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${welcomeMessage}">Chào mừng bạn quay trở lại!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${session.errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${session.errorMessage}">Có lỗi xảy ra!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Welcome Card -->
+        <div class="welcome-card">
+            <h1 class="welcome-title">
+                <i class="fas fa-store me-3" style="color: #74b9ff;"></i>
+                Chào mừng đến với Cửa hàng của chúng tôi!
+            </h1>
+
+            <div class="user-info">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-user me-2"></i>Thông tin tài khoản</h6>
+                        <p class="mb-1"><strong>Tên:</strong> <span th:text="${user.username}">admin</span></p>
+                        <p class="mb-0"><strong>Email:</strong> <span th:text="${user.email}">admin@example.com</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-shopping-bag me-2"></i>Thống kê</h6>
+                        <p class="mb-1"><strong>Tổng sản phẩm:</strong> <span th:text="${totalProducts}">0</span></p>
+                        <p class="mb-0"><strong>Trang hiện tại:</strong> <span th:text="${currentPage + 1}">1</span>/<span th:text="${totalPages}">1</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form method="get" th:action="@{/home}">
+                <div class="row align-items-end">
+                    <div class="col-md-8">
+                        <label for="search" class="form-label fw-bold">
+                            <i class="fas fa-search me-2"></i>Tìm kiếm sản phẩm
+                        </label>
+                        <input type="text"
+                               class="form-control"
+                               id="search"
+                               name="search"
+                               th:value="${search}"
+                               placeholder="Nhập tên sản phẩm...">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-buy w-100">
+                            <i class="fas fa-search me-2"></i>Tìm kiếm
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <a th:href="@{/home}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-times me-2"></i>Xóa
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Products Section -->
+        <div class="row">
+            <!-- Products Grid -->
+            <div th:if="${products != null and !products.empty}">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6" th:each="product : ${products}">
+                        <div class="product-card">
+                            <div th:if="${product.image != null and !product.image.empty}">
+                                <img th:src="${product.image}"
+                                     th:alt="${product.productName}"
+                                     class="product-image">
+                            </div>
+                            <div th:unless="${product.image != null and !product.image.empty}"
+                                 class="product-image-placeholder">
+                                <i class="fas fa-image"></i>
+                            </div>
+
+                            <div class="product-content">
+                                <h5 class="product-title" th:text="${product.productName}">Tên sản phẩm</h5>
+                                <p class="product-description" th:text="${product.description}">Mô tả sản phẩm</p>
+
+                                <div class="product-price" th:text="${#numbers.formatCurrency(product.price)} + ' VNĐ'">
+                                    100,000 VNĐ
+                                </div>
+
+                                <div class="product-stock">
+                                    <span th:if="${product.stock > 0}" class="stock-available">
+                                        <i class="fas fa-check-circle me-1"></i>
+                                        Còn <span th:text="${product.stock}">10</span> sản phẩm
+                                    </span>
+                                    <span th:unless="${product.stock > 0}" class="stock-out">
+                                        <i class="fas fa-times-circle me-1"></i>
+                                        Hết hàng
+                                    </span>
+                                </div>
+
+                                <div class="mt-auto">
+                                    <a th:href="@{/product/detail/{id}(id=${product.id})}"
+                                       class="btn-buy w-100"
+                                       th:classappend="${product.stock <= 0} ? 'disabled' : ''">
+                                        <i class="fas fa-eye me-2"></i>
+                                        <span th:text="${product.stock > 0} ? 'Xem chi tiết' : 'Hết hàng'">Xem chi tiết</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No Products Message -->
+            <div th:if="${products == null or products.empty}" class="no-products">
+                <i class="fas fa-box-open"></i>
+                <h4>Không có sản phẩm nào</h4>
+                <p th:if="${search != null and !search.empty}">
+                    Không tìm thấy sản phẩm nào với từ khóa "<span th:text="${search}"></span>"
+                </p>
+                <p th:unless="${search != null and !search.empty}">
+                    Hiện tại chưa có sản phẩm nào trong cửa hàng.
+                </p>
+                <a th:href="@{/home}" class="btn btn-buy mt-3" th:if="${search != null and !search.empty}">
+                    <i class="fas fa-arrow-left me-2"></i>Xem tất cả sản phẩm
+                </a>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div th:if="${totalPages > 1}" class="pagination-section">
+            <nav aria-label="Product pagination">
+                <ul class="pagination justify-content-center mb-0">
+                    <!-- Previous button -->
+                    <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled' : ''">
+                        <a class="page-link" th:if="${hasPrevious}"
+                           th:href="@{/home(page=${previousPage}, size=${size}, search=${search})}"
+                           aria-label="Trang trước">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                        <span class="page-link" th:unless="${hasPrevious}" aria-label="Trang trước">
+                            <i class="fas fa-chevron-left"></i>
+                        </span>
+                    </li>
+
+                    <!-- Page numbers -->
+                    <li class="page-item"
+                        th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:if="${pageNum ge (currentPage - 2) and pageNum le (currentPage + 2)}"
+                        th:classappend="${pageNum == currentPage} ? 'active' : ''">
+                        <a class="page-link"
+                           th:href="@{/home(page=${pageNum}, size=${size}, search=${search})}"
+                           th:text="${pageNum + 1}">1</a>
+                    </li>
+
+                    <!-- Next button -->
+                    <li class="page-item" th:classappend="${!hasNext} ? 'disabled' : ''">
+                        <a class="page-link" th:if="${hasNext}"
+                           th:href="@{/home(page=${nextPage}, size=${size}, search=${search})}"
+                           aria-label="Trang sau">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                        <span class="page-link" th:unless="${hasNext}" aria-label="Trang sau">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Pagination Info -->
+            <div class="text-center mt-3">
+                <small class="text-muted">
+                    Hiển thị trang <strong th:text="${currentPage + 1}">1</strong>
+                    trên tổng <strong th:text="${totalPages}">1</strong> trang
+                    (<strong th:text="${totalProducts}">0</strong> sản phẩm)
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h5><i class="fas fa-store me-2"></i>MyApp Store</h5>
+                <p class="mb-0">Cửa hàng trực tuyến hiện đại và tiện lợi</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="mb-0">© 2024 MyApp. Tất cả quyền được bảo lưu.</p>
+                <small>Phiên bản 1.0.0</small>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JavaScript -->
+<script>
+    // Product card animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate product cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Apply animation to product cards
+        document.querySelectorAll('.product-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = `all 0.6s ease ${index * 0.1}s`;
+            observer.observe(card);
+        });
+
+        // Search input focus effect
+        const searchInput = document.getElementById('search');
+        if (searchInput) {
+            searchInput.addEventListener('focus', function() {
+                this.parentElement.parentElement.style.transform = 'scale(1.02)';
+                this.parentElement.parentElement.style.transition = 'transform 0.3s ease';
+            });
+
+            searchInput.addEventListener('blur', function() {
+                this.parentElement.parentElement.style.transform = 'scale(1)';
+            });
+        }
+
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const closeBtn = alert.querySelector('.btn-close');
+                if (closeBtn) {
+                    closeBtn.click();
+                }
+            });
+        }, 5000);
+    });
+
+    // Format currency function
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(amount);
+    }
+
+    // Search form enhancement
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchForm = document.querySelector('form[action*="/home"]');
+        if (searchForm) {
+            searchForm.addEventListener('submit', function(e) {
+                const searchInput = this.querySelector('input[name="search"]');
+                if (searchInput && searchInput.value.trim() === '') {
+                    // If search is empty, redirect to home without search parameter
+                    e.preventDefault();
+                    window.location.href = '/home';
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>
