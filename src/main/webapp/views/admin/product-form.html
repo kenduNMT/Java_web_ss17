@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${product.id == null ? 'Thêm sản phẩm mới' : 'Chỉnh sửa sản phẩm'}"></title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+  <h2 th:text="${product.id == null ? 'Thêm sản phẩm mới' : 'Chỉnh sửa sản phẩm'}" class="mb-4"></h2>
+
+  <form th:action="@{/admin/products/save}" th:object="${product}" method="post" enctype="multipart/form-data">
+    <input type="hidden" th:field="*{id}" />
+    <input type="hidden" th:field="*{image}" /> <div class="form-group">
+    <label for="productName">Tên sản phẩm:</label>
+    <input type="text" id="productName" th:field="*{productName}" class="form-control"
+           th:classappend="${#fields.hasErrors('productName') ? 'is-invalid' : ''}" />
+    <div class="invalid-feedback" th:if="${#fields.hasErrors('productName')}" th:errors="*{productName}"></div>
+  </div>
+
+    <div class="form-group">
+      <label for="description">Mô tả:</label>
+      <textarea id="description" th:field="*{description}" class="form-control"
+                th:classappend="${#fields.hasErrors('description') ? 'is-invalid' : ''}"></textarea>
+      <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="price">Giá:</label>
+      <input type="number" id="price" th:field="*{price}" class="form-control" step="0.01"
+             th:classappend="${#fields.hasErrors('price') ? 'is-invalid' : ''}" />
+      <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="stock">Số lượng tồn kho:</label>
+      <input type="number" id="stock" th:field="*{stock}" class="form-control"
+             th:classappend="${#fields.hasErrors('stock') ? 'is-invalid' : ''}" />
+      <div class="invalid-feedback" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="productImageFile">Ảnh sản phẩm:</label>
+      <input type="file" id="productImageFile" name="productImageFile" class="form-control-file" />
+      <div th:if="${product.image}">
+        <p>Ảnh hiện tại:</p>
+        <img th:src="${product.image}" alt="Current Product Image" style="width: 100px; height: 100px; object-fit: cover;">
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Lưu sản phẩm</button>
+    <a th:href="@{/admin/products}" class="btn btn-secondary">Hủy</a>
+  </form>
+</div>
+</body>
+</html>

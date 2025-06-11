@@ -52,6 +52,10 @@ dependencies {
     implementation 'org.thymeleaf:thymeleaf-spring5:3.1.2.RELEASE'
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0'
 
+    // File Upload
+    implementation 'commons-fileupload:commons-fileupload:1.4'
+    implementation 'commons-io:commons-io:2.11.0'
+
     // Logging
     implementation 'org.slf4j:slf4j-api:1.7.36'
     implementation 'ch.qos.logback:logback-classic:1.2.11'
@@ -60,6 +64,9 @@ dependencies {
     implementation("org.springframework:spring-orm:5.3.18")
     implementation("org.hibernate:hibernate-core:5.4.0.Final")
     implementation("org.hibernate:hibernate-entitymanager:5.4.0.Final")
+
+    // https://mvnrepository.com/artifact/com.cloudinary/cloudinary-http44
+    implementation group: 'com.cloudinary', name: 'cloudinary-http44', version: '1.32.2'
 }
 
 test {

@@ -290,16 +290,16 @@
         <!-- Products Section -->
         <div class="row">
             <!-- Products Grid -->
-            <div th:if="${products != null and !products.empty}">
+            <div th:if="${products != null}">
                 <div class="row">
                     <div class="col-lg-4 col-md-6" th:each="product : ${products}">
                         <div class="product-card">
-                            <div th:if="${product.image != null and !product.image.empty}">
+                            <div th:if="${product.image != null}">
                                 <img th:src="${product.image}"
                                      th:alt="${product.productName}"
                                      class="product-image">
                             </div>
-                            <div th:unless="${product.image != null and !product.image.empty}"
+                            <div th:unless="${product.image != null}"
                                  class="product-image-placeholder">
                                 <i class="fas fa-image"></i>
                             </div>
@@ -338,16 +338,16 @@
             </div>
 
             <!-- No Products Message -->
-            <div th:if="${products == null or products.empty}" class="no-products">
+            <div th:if="${products == null }" class="no-products">
                 <i class="fas fa-box-open"></i>
                 <h4>Không có sản phẩm nào</h4>
-                <p th:if="${search != null and !search.empty}">
+                <p th:if="${search != null }">
                     Không tìm thấy sản phẩm nào với từ khóa "<span th:text="${search}"></span>"
                 </p>
-                <p th:unless="${search != null and !search.empty}">
+                <p th:unless="${search != null }">
                     Hiện tại chưa có sản phẩm nào trong cửa hàng.
                 </p>
-                <a th:href="@{/home}" class="btn btn-buy mt-3" th:if="${search != null and !search.empty}">
+                <a th:href="@{/home}" class="btn btn-buy mt-3" th:if="${search != null}">
                     <i class="fas fa-arrow-left me-2"></i>Xem tất cả sản phẩm
                 </a>
             </div>
